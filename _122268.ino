@@ -27,8 +27,8 @@
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT,
                                          SPI_CLOCK_DIVIDER); // you can change this clock speed
 
-#define WLAN_SSID       "N704M"          // cannot be longer than 32 characters!
-#define WLAN_PASS       "skek2sha"
+#define WLAN_SSID       "makye"          // cannot be longer than 32 characters!
+#define WLAN_PASS       "dkaghdkagh"
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
@@ -125,10 +125,10 @@ void setup() {
     delay(100); // ToDo: Insert a DHCP timeout!
   }  
 
-  /* Display the IP address DNS, Gateway, etc. */  
+  /* Display the IP address DNS, Gateway, etc. 
   while (! displayConnectionDetails()) {
     delay(1000);
-  }
+  }*/
 
   ip = 0;
   // Try looking up the website's IP address
@@ -220,9 +220,13 @@ void loop() {
   Serial.print(" *C ");
   Serial.print(hif);
   Serial.println(" *F");
-
-  if( hic>25.0) hotLed();
-  if( hic>18.0 && hic<= 25.0) warmLed();
+  
+  
+  for(int i=0; i<NUMPIXELS; i++){
+    pixels.setPixelColor(i, pixels.Color(0,121,46) );
+    pixels.show();
+  
+    }
  }
 
  

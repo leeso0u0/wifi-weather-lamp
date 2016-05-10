@@ -1,5 +1,5 @@
 #include <DHT.h> // DHT 라이브러리
-
+//라이브러리 새로 추가해야
 #include <Adafruit_NeoPixel.h> // 네오픽셀 라이브러리
 #ifdef __AVR__
 #include <avr/power.h>
@@ -15,8 +15,8 @@
 #define DHTPIN 2            //DHT 11 핀
 #define DHTTYPE DHT11
 
-#define LEDPIN 6            //LED 핀
-#define NUMPIXELS 1
+#define LEDPIN 6            //LED 핀함
+#define NUMPIXELS 1ㅋ
 
 #define ADAFRUIT_CC3000_IRQ   3  //WIFI 핀
 #define ADAFRUIT_CC3000_VBAT  5
@@ -35,6 +35,8 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ
 // What page to grab!
 #define WEBSITE      "www.kma.go.kr"
 #define WEBPAGE      "/wid/queryDFSRSS.jsp?zone=1121573000"
+#define WIFION  11
+#define DHTON   22
 
 int dim;
 DHT dht(DHTPIN, DHTTYPE);
@@ -42,60 +44,12 @@ DHT dht(DHTPIN, DHTTYPE);
 int delayval = 500; // Neopixel 딜레이
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
 
+
 uint32_t ip;
 
-void coldLed() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(16, 35, 64) );
-    pixels.show();
-  }
-}
+int mode;
+float temp = 0;
 
-void coolLed() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(62, 76, 127) );
-    pixels.show();
-  }
-}
-
-void fineLed() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(201, 201, 201) );
-    pixels.show();
-  }
-}
-
-void warmLed() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(255, 166, 106) );
-    pixels.show();
-  }
-}
-
-void hotLed() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(235, 121, 46) );
-    pixels.show();
-  }
-}
-
-float checkHic()
-{
-  // Wait a few seconds between measurements.
-  delay(2000);
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
-
-  // Check if any reads failed and exit early (to try again).
-  if ( isnan(h) || isnan(t) ) {
-    Serial.println("Failed to read from DHT sensor!");
-    return 0;
-  }
-  // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
-  return hic;
-}
 
 void setup() {
   Serial.begin(9600); //디버그 시리얼
@@ -190,8 +144,15 @@ void setup() {
 
 }
 
-void loop() {
+void loop() 
+{
 
-  Serial.println(checkHic());
+  if( checkHic() == 99 ) 
+  {
+    Serial.println("Wifi mode");
+    mode=DHTON;
+    temp = checkHic();
+  }
+  
 }
 

@@ -15,5 +15,6 @@ float checkHic()
   }
   // Compute heat index in Celsius (isFahreheit = false)
   float hic = dht.computeHeatIndex(t, h, false);
+
   return hic;
 }

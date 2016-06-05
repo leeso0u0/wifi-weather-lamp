@@ -24,8 +24,8 @@
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT,
                          SPI_CLOCK_DIVIDER); // you can change this clock speed
 
-#define WLAN_SSID       "N704M"          // cannot be longer than 32 characters!
-#define WLAN_PASS       "******"
+#define WLAN_SSID       "makye"          // cannot be longer than 32 characters!
+#define WLAN_PASS       "dkaghdkagh"
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
 #define IDLE_TIMEOUT_MS  3000      // Amount of time to wait (in milliseconds) with no data 
@@ -37,6 +37,8 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ
 #define WEBPAGE      "/wid/queryDFSRSS.jsp?zone=1121573000"
 #define WIFION  11
 #define DHTON   22
+
+#define BUFSIZE 20
 
 int dim;
 DHT dht(DHTPIN, DHTTYPE);
@@ -56,10 +58,10 @@ void setup() {
   dht.begin();
   Serial.println("DHT11 start");
 
-  pixels.begin();
-  Serial.println("Neopixel start");
+  //pixels.begin();
+  //  Serial.println("Neopixel start");
 
-    if (!cc3000.begin())
+  if (!cc3000.begin())
   {
     Serial.println(F("Couldn't begin()! Check your wiring?"));
     while (1);
@@ -68,7 +70,7 @@ void setup() {
   // Optional SSID scan
   // listSSIDResults();
 
-  Serial.print(F("\nAttempting to connect to ")); Serial.println(WLAN_SSID);
+  Serial.print(F("Attempting to connect to ")); Serial.println(WLAN_SSID);
   if (!cc3000.connectToAP(WLAN_SSID, WLAN_PASS, WLAN_SECURITY)) {
     Serial.println(F("Failed!"));
     while (1);
@@ -126,10 +128,47 @@ void setup() {
 
   /* Read data until either the connection is closed, or the idle timeout is reached. */
   unsigned long lastRead = millis();
+  char buffer[BUFSIZE];
+  boolean tagStart = false;
+  boolean readValue = false;
+
   while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS)) {
+    if (temp) {
+      break;
+    }
+    
     while (www.available()) {
-      char c = www.read();
-      Serial.print(c);
+      char c = www.read(); 
+
+      if (c == '>') {
+        tagStart = false;
+        if (strcmp(buffer, "temp") == 0) {
+          readValue = true;
+        }
+
+        memset(buffer, 0, sizeof(char) * BUFSIZE);
+        continue;
+      }
+
+      if (c == '<') {
+        if (readValue) {
+          readValue = false;
+
+          // 첫번째 온도만 사용
+          temp = atof(buffer);
+          break;
+        }
+
+        tagStart = true;
+        memset(buffer, 0, sizeof(char) * BUFSIZE);
+        continue;
+      }
+
+      if (tagStart || readValue) {
+        buffer[strlen(buffer)] = c;
+      }
+
+//      Serial.print(c);
       lastRead = millis();
     }
   }
@@ -141,6 +180,7 @@ void setup() {
   Serial.println(F("\n\nDisconnecting"));
   cc3000.disconnect();
 
+  Serial.println(temp);
 }
 
 void loop()
@@ -149,16 +189,16 @@ void loop()
   temp = checkHic();
   Serial.println(temp);
 
- /* if( checkHic() == 99 ) 
-  {
-    Serial.println("Wifi mode");
-    mode=DHTON;
-    temp = checkHic();
-  }*/
+  /* if( checkHic() == 99 )
+    {
+     Serial.println("Wifi mode");
+     mode=DHTON;
+     temp = checkHic();
+    }*/
 
-  if( temp < 9.0) coldLed();
-  else if( temp < 16.0) coolLed();
-  else if( temp < 22.0) fineLed();
-  else if( temp < 26.0) warmLed();
-  else if( temp >= 26.0) hotLed();
+  // if( temp < 9.0) coldLed();
+  //else if( temp < 16.0) coolLed();
+  //else if( temp < 22.0) fineLed();
+  //else if( temp < 26.0) warmLed();
+  //else if( temp >= 26.0) hotLed();
 }

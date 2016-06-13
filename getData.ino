@@ -1,5 +1,5 @@
- 
- void getData(){
+
+void getData() {
   Serial.print(F("Attempting to connect to ")); Serial.println(WLAN_SSID);
   if (!cc3000.connectToAP(WLAN_SSID, WLAN_PASS, WLAN_SECURITY)) {
     Serial.println(F("Failed!"));
@@ -68,7 +68,7 @@
           readValue = false;
 
           // 첫번째 온도만 사용
-          temp = atof(buffer);
+          wifi_temp = atof(buffer);
           break;
         }
 
@@ -86,7 +86,8 @@
   www.close();
   Serial.println(F("-------------------------------------"));
   Serial.println(F("\n\nDisconnecting"));
-  cc3000.disconnect();
+ // cc3000.disconnect();
 
-  Serial.println(temp);
-  }
+  Serial.println(wifi_temp);
+  
+}

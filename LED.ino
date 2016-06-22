@@ -2,7 +2,7 @@
 void coldLed() {
   //-5 ~ 9도
   for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(0, 255, 255) );
+    pixels.setPixelColor(i, pixels.Color(0, 0, 255) );
     pixels.show();
   }
 }
@@ -10,7 +10,7 @@ void coldLed() {
 void coolLed() {
   //10 ~ 16도
   for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pixels.Color(0, 0, 255) );
+    pixels.setPixelColor(i, pixels.Color(0, 255, 255) );
     pixels.show();
   }
 }

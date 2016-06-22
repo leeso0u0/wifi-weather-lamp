@@ -45,13 +45,14 @@ void setup() {
     Serial.println(F("Couldn't begin()! Check your wiring?"));
   }
   dht.begin();
+  //getData();
 }
 
 void loop()
 {
-  getData();
   checkHic();
-  
+
+
   if (isWifiOn) {
     temp = wifi_temp;
     Serial.println("wifi");
@@ -59,12 +60,13 @@ void loop()
   else {
     temp = dht_temp;
     Serial.println("dht");
+    Serial.println(temp);
   }
+  
   if ( temp < 9.0) coldLed();
   else if ( temp < 16.0) coolLed();
   else if ( temp < 22.0) fineLed();
   else if ( temp < 26.0) warmLed();
   else if ( temp >= 26.0) hotLed();
   
-  delay(600000);
 }

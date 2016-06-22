@@ -86,7 +86,7 @@ void getData() {
   www.close();
   Serial.println(F("-------------------------------------"));
   Serial.println(F("\n\nDisconnecting"));
- // cc3000.disconnect();
+ cc3000.disconnect();
 
   Serial.println(wifi_temp);
   
